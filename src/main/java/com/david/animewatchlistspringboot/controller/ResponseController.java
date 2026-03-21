@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @CrossOrigin(origins = "http://localhost:5173")
-public class ReponseController {
+public class ResponseController {
 
     @RequestMapping("/api/response")
     public String getResponse(){
