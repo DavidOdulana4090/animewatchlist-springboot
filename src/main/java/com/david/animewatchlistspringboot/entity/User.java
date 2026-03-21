@@ -4,6 +4,8 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.NoArgsConstructor;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PostMapping;
 
 @Setter
 @Getter
@@ -55,4 +57,6 @@ public class User {
     public void setPassword(String password) {
         this.password = password;
     }
+
+
 }

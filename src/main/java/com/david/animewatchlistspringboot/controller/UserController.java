@@ -5,10 +5,7 @@ import com.david.animewatchlistspringboot.entity.User;
 import com.david.animewatchlistspringboot.repository.DatabaseRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
 
@@ -50,5 +47,31 @@ public class UserController {
         return ResponseEntity.badRequest().body("Invalid Password");
     }
 
+    @PutMapping("/forgotpassword")
+    public ResponseEntity<?> forgotPassword(@RequestBody Map<String, Object> userData){
+        if (!DatabaseRepository.existsByEmail(userData.get("email").toString())){
+            return ResponseEntity.badRequest().body("Email does not exist");
+        } else {
+            User user = DatabaseRepository.findByEmail(userData.get("email").toString());
+            return ResponseEntity.ok("Password Reset Screen");
+        }
+    }
+
+    @PutMapping("/newpassword")
+    public ResponseEntity<?> SetNewPassword(@RequestBody Map<String, Object> userData){
+
+        String email = userData.get("email").toString();
+        String password = userData.get("password").toString();
+        String hashpassword = securityConfig.passwordEncoder().encode(password);
+
+        if (!DatabaseRepository.existsByEmail(email)){
+            return ResponseEntity.badRequest().body("Email does not exist");
+        } else {
+            User user = DatabaseRepository.findByEmail(email);
+            user.setPassword(hashpassword);
+            DatabaseRepository.save(user);
+            return ResponseEntity.ok("Password Reset Successful");
+        }
+    }
 
 }
