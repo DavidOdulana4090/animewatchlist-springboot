@@ -74,4 +74,21 @@ public class UserController {
         }
     }
 
+    @PostMapping("/getusername")
+    public ResponseEntity<?> getUsernameFromEmail(@RequestBody Map<String, Object> userData){
+        String email = userData.get("email").toString();
+        if(!DatabaseRepository.existsByEmail(email)){
+            return ResponseEntity.badRequest().body("Email does not exist");
+        } else {
+            User user = DatabaseRepository.findByEmail(email);
+            return ResponseEntity.ok(user.getUsername());
+        }
+    }
+
+    @PostMapping("/logout")
+    public ResponseEntity<?> logout(@RequestBody Map<String, Object> userData){
+        return ResponseEntity.ok("Logout Successful");
+
+    }
+
 }

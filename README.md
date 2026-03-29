@@ -1,2 +1,2 @@
-    Anime watchlist / movie tracker
-    java Springboot
+#  Anime watchlist / movie tracker
+#  springboot
