@@ -7,6 +7,8 @@ import lombok.NoArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 
+import java.time.LocalDateTime;
+
 @Setter
 @Getter
 @Entity
@@ -20,6 +22,7 @@ public class User {
     private String username;
     private String email;
     private String password;
+    private LocalDateTime createdAt;
 
     public User(String email, String password) {
         this.email = email;
@@ -58,5 +61,12 @@ public class User {
         this.password = password;
     }
 
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
+    }
 
 }

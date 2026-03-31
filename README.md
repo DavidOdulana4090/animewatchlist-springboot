@@ -1,2 +1,6 @@
 #  Anime watchlist / movie tracker
-#  springboot
+#  Java 25
+#  Springboot
+#  Spring Security & JWT (JSON Web Tokens)
+#  Spring Data JPA
+#  Supabase
