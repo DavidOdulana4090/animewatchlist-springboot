@@ -1,5 +1,6 @@
 package com.david.animewatchlistspringboot.controller;
 
+import com.david.animewatchlistspringboot.DTO.userDTO;
 import com.david.animewatchlistspringboot.config.SecurityConfig;
 import com.david.animewatchlistspringboot.entity.User;
 import com.david.animewatchlistspringboot.repository.DatabaseRepository;
@@ -7,6 +8,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Map;
 
 
@@ -28,7 +31,7 @@ public class UserController {
 
         User user = new User();
         user.setEmail(userData.get("email").toString());
-        user.setCreatedAt(java.time.LocalDateTime.now());
+        user.setCreatedAt(LocalDate.now());
         user.setPassword(encoded);
 
         DatabaseRepository.save(user);
@@ -75,33 +78,19 @@ public class UserController {
         }
     }
 
-    @PostMapping("/getusername")
-    public ResponseEntity<?> getUsernameFromEmail(@RequestBody Map<String, Object> userData) {
-        String email = userData.get("email").toString();
-        if (!DatabaseRepository.existsByEmail(email)) {
-            return ResponseEntity.badRequest().body("Email does not exist");
-        } else {
-            User user = DatabaseRepository.findByEmail(email);
-            return ResponseEntity.ok(user.getUsername());
-        }
-    }
-
     @PostMapping("/logout")
     public ResponseEntity<?> logout(@RequestBody Map<String, Object> userData) {
+        String email = userData.get("email").toString();
+        if(!DatabaseRepository.existsByEmail(email)){
+            return ResponseEntity.badRequest().body("ERROR ");
+        }
         return ResponseEntity.ok("Logout Successful");
 
     }
 
     @GetMapping("/me")
-    public ResponseEntity<?> getInfo(@RequestParam String email) {
-        if (email == null || email.isEmpty()) {
-            return ResponseEntity.badRequest().body("Email is required");
-        } else if (!DatabaseRepository.existsByEmail(email)) {
-            return ResponseEntity.badRequest().body("Email does not exist");
-        } else {
-            User user = DatabaseRepository.findByEmail(email);
-            return ResponseEntity.ok(user);
-        }
+    public ResponseEntity<userDTO> getInfo() {
+        return ResponseEntity.ok(new userDTO("testemail", "testpassword"));
     }
 
 }
