@@ -8,6 +8,6 @@ import java.util.List;
 public interface AnimeRepository extends JpaRepository<Anime, Long> {
 
     Anime findByTitle(String title);
-    List<Anime> findUserById(Long UserId);
+    List<Anime> findByUserId(Long id);
 
 }

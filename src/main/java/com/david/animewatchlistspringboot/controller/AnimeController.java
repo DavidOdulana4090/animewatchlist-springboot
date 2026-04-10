@@ -16,9 +16,9 @@ public class AnimeController {
     @Autowired
     private com.david.animewatchlistspringboot.repository.AnimeRepository animeRepository;
 
-    @GetMapping("/all/{id}")
-    public List<AnimeDTO> getAllAnime(@PathVariable Long id) {
-        return animeRepository.findUserById(id).stream()
+    @GetMapping("/all/{Id}")
+    public List<AnimeDTO> findUserbyId(@PathVariable Long Id) {
+        return animeRepository.findByUserId(Id).stream()
                 .map(anime -> {
                     AnimeDTO animeDTO = new AnimeDTO();
                     animeDTO.setId(anime.getId());
