@@ -1,15 +1,15 @@
 package com.david.animewatchlistspringboot.controller;
 
-import com.david.animewatchlistspringboot.DTO.userDTO;
+import com.david.animewatchlistspringboot.DTO.ProfileDTO;
 import com.david.animewatchlistspringboot.config.SecurityConfig;
 import com.david.animewatchlistspringboot.entity.User;
 import com.david.animewatchlistspringboot.repository.DatabaseRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.Map;
 
 
@@ -41,7 +41,7 @@ public class UserController {
     @PostMapping("/login")
     public ResponseEntity<?> loginUser(@RequestBody Map<String, Object> userData) {
         if (!DatabaseRepository.existsByEmail(userData.get("email").toString())) {
-            return ResponseEntity.badRequest().body("Email does not exist!");
+            return ResponseEntity.badRequest().body("Email does not exist");
         } else {
             User user = DatabaseRepository.findByEmail(userData.get("email").toString());
             if (securityConfig.passwordEncoder().matches(userData.get("password").toString(), user.getPassword())) {
@@ -89,8 +89,20 @@ public class UserController {
     }
 
     @GetMapping("/me")
-    public ResponseEntity<userDTO> getInfo() {
-        return ResponseEntity.ok(new userDTO("testemail", "testpassword"));
+    public ResponseEntity<ProfileDTO> getInfo(@AuthenticationPrincipal User user) {
+        if (user == null) {
+            return ResponseEntity.badRequest().build();
+        }
+        return ResponseEntity.ok(new ProfileDTO(user.getEmail(), user.getUsername(), user.getCreatedAt().toString()));
+    }
+
+    @GetMapping("/api/users/{id}")
+    public ResponseEntity<ProfileDTO> displaybyId(@PathVariable long id) {
+        User user = DatabaseRepository.findById(id).orElse(null);
+        if (user == null) {
+            return ResponseEntity.badRequest().build();
+        }
+        return ResponseEntity.ok(new ProfileDTO(user.getEmail(), user.getUsername(), user.getCreatedAt().toString()));
     }
 
 }

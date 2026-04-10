@@ -1,14 +1,14 @@
 package com.david.animewatchlistspringboot.DTO;
 
-public class userDTO {
+public class ProfileDTO {
     private String email;
     private String username;
-    private String password;
     private String createdAt;
 
-    public userDTO(String email, String password) {
+    public ProfileDTO(String email, String username, String createdAt) {
         this.email = email;
-        this.password = password;
+        this.username = username;
+        this.createdAt = createdAt;
     }
 
     public String getEmail() {
@@ -17,10 +17,6 @@ public class userDTO {
 
     public String getUsername() {
         return username;
-    }
-
-    public String getPassword() {
-        return password;
     }
 
     public String getCreatedAt() {
