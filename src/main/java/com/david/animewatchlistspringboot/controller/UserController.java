@@ -39,16 +39,27 @@ public class UserController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<?> loginUser(@RequestBody Map<String, Object> userData) {
-        if (!DatabaseRepository.existsByEmail(userData.get("email").toString())) {
-            return ResponseEntity.badRequest().body("Email does not exist");
-        } else {
-            User user = DatabaseRepository.findByEmail(userData.get("email").toString());
-            if (securityConfig.passwordEncoder().matches(userData.get("password").toString(), user.getPassword())) {
-                return ResponseEntity.ok("Login successful");
-            }
+    public ResponseEntity<ProfileDTO> loginUser(@RequestBody Map<String, Object> userData) {
+        String email = userData.get("email").toString();
+        String password = userData.get("password").toString();
+
+        if (!DatabaseRepository.existsByEmail(email)) {
+            return ResponseEntity.badRequest().body(new ProfileDTO(email, "", "", ""));
         }
-        return ResponseEntity.badRequest().body("Invalid Password");
+
+        User user = DatabaseRepository.findByEmail(email);
+
+        if (!securityConfig.passwordEncoder().matches(password, user.getPassword())) {
+            return ResponseEntity.badRequest().body(new ProfileDTO(email, "", "", ""));
+        }
+
+        ProfileDTO profileDTO = new ProfileDTO(
+                user.getEmail(),
+                user.getUsername(),
+                user.getCreatedAt().toString(),
+                user.getId().toString()
+        );
+        return ResponseEntity.ok(profileDTO);
     }
 
     @PutMapping("/forgotpassword")
@@ -93,7 +104,8 @@ public class UserController {
         if (user == null) {
             return ResponseEntity.badRequest().build();
         }
-        return ResponseEntity.ok(new ProfileDTO(user.getEmail(), user.getUsername(), user.getCreatedAt().toString()));
+        return ResponseEntity.ok(new ProfileDTO(user.getEmail(), user.getUsername(),
+                user.getCreatedAt().toString(), user.getId().toString()));
     }
 
     @GetMapping("/api/users/{id}")
@@ -102,7 +114,8 @@ public class UserController {
         if (user == null) {
             return ResponseEntity.badRequest().build();
         }
-        return ResponseEntity.ok(new ProfileDTO(user.getEmail(), user.getUsername(), user.getCreatedAt().toString()));
+        return ResponseEntity.ok(new ProfileDTO(user.getEmail(), user.getUsername(),
+                user.getCreatedAt().toString(), user.getId().toString()));
     }
 
 }
