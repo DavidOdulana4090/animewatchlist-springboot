@@ -1,5 +1,7 @@
 package com.david.animewatchlistspringboot.controller;
 
+import com.david.animewatchlistspringboot.DTO.CreateAccountDTO;
+import com.david.animewatchlistspringboot.DTO.LoginDTO;
 import com.david.animewatchlistspringboot.DTO.ProfileDTO;
 import com.david.animewatchlistspringboot.config.SecurityConfig;
 import com.david.animewatchlistspringboot.entity.User;
@@ -23,14 +25,14 @@ public class UserController {
     private SecurityConfig securityConfig;
 
     @PostMapping("/register")
-    public ResponseEntity<?> registerUser(@RequestBody Map<String, Object> userData) {
-        if (DatabaseRepository.existsByEmail(userData.get("email").toString())) {
+    public ResponseEntity<?> registerUser(@RequestBody CreateAccountDTO createAccountDTO) {
+        if (DatabaseRepository.existsByEmail(createAccountDTO.getEmail())) {
             return ResponseEntity.badRequest().body("Email already exists!");
         }
-        String encoded = securityConfig.passwordEncoder().encode(userData.get("password").toString());
+        String encoded = securityConfig.passwordEncoder().encode(createAccountDTO.getPassword());
 
         User user = new User();
-        user.setEmail(userData.get("email").toString());
+        user.setEmail(createAccountDTO.getEmail());
         user.setCreatedAt(LocalDate.now());
         user.setPassword(encoded);
 
@@ -39,18 +41,20 @@ public class UserController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<ProfileDTO> loginUser(@RequestBody Map<String, Object> userData) {
-        String email = userData.get("email").toString();
-        String password = userData.get("password").toString();
+    public ResponseEntity<ProfileDTO> loginUser(@RequestBody LoginDTO loginDTO) {
+        String email = loginDTO.getEmail();
+        String password = loginDTO.getPassword();
 
         if (!DatabaseRepository.existsByEmail(email)) {
-            return ResponseEntity.badRequest().body(new ProfileDTO(email, "", "", ""));
+            return ResponseEntity.badRequest().body(
+                    new ProfileDTO(email, "", "", ""));
         }
 
         User user = DatabaseRepository.findByEmail(email);
 
         if (!securityConfig.passwordEncoder().matches(password, user.getPassword())) {
-            return ResponseEntity.badRequest().body(new ProfileDTO(email, "", "", ""));
+            return ResponseEntity.badRequest().body(
+                    new ProfileDTO(email, "", "", ""));
         }
 
         ProfileDTO profileDTO = new ProfileDTO(
@@ -63,20 +67,20 @@ public class UserController {
     }
 
     @PutMapping("/forgotpassword")
-    public ResponseEntity<?> forgotPassword(@RequestBody Map<String, Object> userData) {
-        if (!DatabaseRepository.existsByEmail(userData.get("email").toString())) {
+    public ResponseEntity<?> forgotPassword(@RequestParam String email) {
+        if (!DatabaseRepository.existsByEmail(email)) {
             return ResponseEntity.badRequest().body("Email does not exist");
         } else {
-            User user = DatabaseRepository.findByEmail(userData.get("email").toString());
+            User user = DatabaseRepository.findByEmail(email);
             return ResponseEntity.ok("Password Reset Screen");
         }
     }
 
     @PutMapping("/newpassword")
-    public ResponseEntity<?> SetNewPassword(@RequestBody Map<String, Object> userData) {
+    public ResponseEntity<?> SetNewPassword(@RequestBody LoginDTO loginDTO) {
 
-        String email = userData.get("email").toString();
-        String password = userData.get("password").toString();
+        String email = loginDTO.getEmail();
+        String password = loginDTO.getPassword();
         String hashpassword = securityConfig.passwordEncoder().encode(password);
 
         if (!DatabaseRepository.existsByEmail(email)) {
