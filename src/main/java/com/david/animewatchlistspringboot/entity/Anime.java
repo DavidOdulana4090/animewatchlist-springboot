@@ -33,31 +33,4 @@ public class Anime {
         this.title = title;
     }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
-    public void setStatus(String status) {
-        this.status = status;
-    }
-
-    public void setProgress(int progress) {
-        this.progress = progress;
-    }
-
-    public void setGenre(String genre) {
-        this.genre = genre;
-    }
-
-    public void setRating(double rating) {
-        this.rating = rating;
-    }
-
-    public void setFavourites(boolean favourites) {
-        this.favourites = favourites;
-    }
 }

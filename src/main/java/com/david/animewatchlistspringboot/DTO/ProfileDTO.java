@@ -1,5 +1,8 @@
 package com.david.animewatchlistspringboot.DTO;
 
+import lombok.Getter;
+
+@Getter
 public class ProfileDTO {
     private String email;
     private String username;
@@ -13,19 +16,4 @@ public class ProfileDTO {
         this.userId = userId;
     }
 
-    public String getEmail() {
-        return email;
-    }
-
-    public String getUsername() {
-        return username;
-    }
-
-    public String getCreatedAt() {
-        return createdAt;
-    }
-
-    public String getUserId() {
-        return userId;
-    }
 }

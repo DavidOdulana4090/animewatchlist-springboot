@@ -1,6 +1,7 @@
 package com.david.animewatchlistspringboot.repository;
 
 import com.david.animewatchlistspringboot.entity.Anime;
+import com.david.animewatchlistspringboot.entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;

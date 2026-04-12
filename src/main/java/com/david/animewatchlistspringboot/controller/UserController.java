@@ -5,7 +5,7 @@ import com.david.animewatchlistspringboot.DTO.LoginDTO;
 import com.david.animewatchlistspringboot.DTO.ProfileDTO;
 import com.david.animewatchlistspringboot.config.SecurityConfig;
 import com.david.animewatchlistspringboot.entity.User;
-import com.david.animewatchlistspringboot.repository.DatabaseRepository;
+import com.david.animewatchlistspringboot.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -20,7 +20,7 @@ import java.util.Map;
 public class UserController {
 
     @Autowired
-    private DatabaseRepository DatabaseRepository;
+    private UserRepository DatabaseRepository;
     @Autowired
     private SecurityConfig securityConfig;
 
