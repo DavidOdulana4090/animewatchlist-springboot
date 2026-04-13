@@ -8,11 +8,11 @@ import com.david.animewatchlistspringboot.entity.User;
 import com.david.animewatchlistspringboot.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
 import java.util.Map;
+import java.util.UUID;
 
 
 @RestController
@@ -47,26 +47,26 @@ public class UserController {
 
         if (!DatabaseRepository.existsByEmail(email)) {
             return ResponseEntity.badRequest().body(
-                    new ProfileDTO(email, "", "", ""));
+                    new ProfileDTO(email, "", "", null));
         }
 
         User user = DatabaseRepository.findByEmail(email);
 
         if (!securityConfig.passwordEncoder().matches(password, user.getPassword())) {
             return ResponseEntity.badRequest().body(
-                    new ProfileDTO(email, "", "", ""));
+                    new ProfileDTO(email, "", "", null));
         }
 
         ProfileDTO profileDTO = new ProfileDTO(
                 user.getEmail(),
                 user.getUsername(),
                 user.getCreatedAt().toString(),
-                user.getId().toString()
+                user.getUuid()
         );
         return ResponseEntity.ok(profileDTO);
     }
 
-    @PutMapping("/forgotpassword")
+    @PutMapping("/forgot-password")
     public ResponseEntity<?> forgotPassword(@RequestParam String email) {
         if (!DatabaseRepository.existsByEmail(email)) {
             return ResponseEntity.badRequest().body("Email does not exist");
@@ -76,7 +76,7 @@ public class UserController {
         }
     }
 
-    @PutMapping("/newpassword")
+    @PutMapping("/update-password")
     public ResponseEntity<?> SetNewPassword(@RequestBody LoginDTO loginDTO) {
 
         String email = loginDTO.getEmail();
@@ -103,23 +103,13 @@ public class UserController {
 
     }
 
-    @GetMapping("/me")
-    public ResponseEntity<ProfileDTO> getInfo(@AuthenticationPrincipal User user) {
+    @GetMapping("/api/users/{uuid}")
+    public ResponseEntity<User> displaybyId(@PathVariable UUID uuid) {
+        User user = DatabaseRepository.findById(uuid).orElse(null);
         if (user == null) {
             return ResponseEntity.badRequest().build();
         }
-        return ResponseEntity.ok(new ProfileDTO(user.getEmail(), user.getUsername(),
-                user.getCreatedAt().toString(), user.getId().toString()));
-    }
-
-    @GetMapping("/api/users/{id}")
-    public ResponseEntity<ProfileDTO> displaybyId(@PathVariable long id) {
-        User user = DatabaseRepository.findById(id).orElse(null);
-        if (user == null) {
-            return ResponseEntity.badRequest().build();
-        }
-        return ResponseEntity.ok(new ProfileDTO(user.getEmail(), user.getUsername(),
-                user.getCreatedAt().toString(), user.getId().toString()));
+        return ResponseEntity.ok(user);
     }
 
 }

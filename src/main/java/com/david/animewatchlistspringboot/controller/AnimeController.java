@@ -11,6 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/anime")
@@ -20,18 +21,18 @@ public class AnimeController {
     private AnimeRepository animeRepository;
 
     @Autowired
-    private UserRepository UserRepository;
+    private UserRepository userRepository;
 
 
-    @GetMapping("/all/{Id}")
-    public List<AnimeDTO> findUserbyId(@PathVariable Long Id) {
-        User user = UserRepository.findById(Id)
+    @GetMapping("/list/{uuid}")
+    public List<AnimeDTO> findUserbyId(@PathVariable UUID uuid) {
+        User user = userRepository.findById(uuid)
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
-        return animeRepository.findByUserId(Id).stream()
+        return animeRepository.findByUserUuid(uuid).stream()
                 .map(anime -> {
                     AnimeDTO animeDTO = new AnimeDTO();
-                    animeDTO.setUserId(user.getId());
+                    animeDTO.setUserId(user.getUuid());
                     animeDTO.setId(anime.getId());
                     animeDTO.setTitle(anime.getTitle());
                     animeDTO.setStatus(anime.getStatus());
@@ -43,8 +44,8 @@ public class AnimeController {
                 }).toList();
     }
 
-    @PostMapping("/add{id}")
-    public ResponseEntity<Anime> addAnime(@RequestBody AnimeDTO animeDTO, @RequestParam Long id) {
+    @PostMapping("/add/{uuid}")
+    public ResponseEntity<Anime> addAnime(@RequestBody AnimeDTO animeDTO, @RequestParam String uuid) {
         Anime newAnime = new Anime();
         newAnime.setTitle(animeDTO.getTitle());
         newAnime.setStatus(animeDTO.getStatus());
@@ -52,18 +53,12 @@ public class AnimeController {
         newAnime.setGenre(animeDTO.getGenre());
         newAnime.setRating(animeDTO.getRating());
         newAnime.setFavourites(animeDTO.getIsFavourite());
-        User user = UserRepository.findById(id).orElseThrow(() -> new RuntimeException("User not found"));
+        User user =
+                userRepository.findById(UUID.fromString(uuid)).orElseThrow(() -> new RuntimeException("User not found"));
         newAnime.setUser(user);  // Set the user for the anime
 
         Anime savedAnime = animeRepository.save(newAnime);
         return ResponseEntity.ok(savedAnime);
-    }
-
-    @GetMapping("/{id}")
-    public ResponseEntity<Anime> getAnimeById(@PathVariable Long id) {
-        return animeRepository.findById(id)
-                .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
     }
 
     @PutMapping("/update/{id}")

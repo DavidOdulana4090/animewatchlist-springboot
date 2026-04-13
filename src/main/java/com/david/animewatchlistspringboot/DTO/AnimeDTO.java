@@ -5,11 +5,13 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.UUID;
+
 @Getter
 @Setter
 public class AnimeDTO {
 
-    private Long userId;
+    private UUID userId;
     private Long id;
     private String title;
     private String status;

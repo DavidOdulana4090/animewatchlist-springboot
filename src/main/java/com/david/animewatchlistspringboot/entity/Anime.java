@@ -12,7 +12,7 @@ import java.util.UUID;
 @Getter
 @Entity
 @NoArgsConstructor
-@Table(name = "anime/movies")
+@Table(name = "anime")
 public class Anime {
 
     @Id
