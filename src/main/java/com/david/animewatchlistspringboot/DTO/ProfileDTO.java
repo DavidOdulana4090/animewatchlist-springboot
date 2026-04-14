@@ -10,12 +10,15 @@ public class ProfileDTO {
     private String username;
     private UUID userId;
     private String createdAt;
+    private String token;
 
-    public ProfileDTO(String email, String username, String createdAt, UUID userId) {
+
+    public ProfileDTO(String email, String username, String createdAt, UUID userId, String token) {
         this.email = email;
         this.username = username;
         this.createdAt = createdAt;
         this.userId = userId;
+        this.token = token;
     }
 
 }

@@ -6,6 +6,7 @@ import com.david.animewatchlistspringboot.DTO.ProfileDTO;
 import com.david.animewatchlistspringboot.config.SecurityConfig;
 import com.david.animewatchlistspringboot.entity.User;
 import com.david.animewatchlistspringboot.repository.UserRepository;
+import com.david.animewatchlistspringboot.service.JwtService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -23,6 +24,9 @@ public class UserController {
     private UserRepository DatabaseRepository;
     @Autowired
     private SecurityConfig securityConfig;
+    @Autowired
+    private JwtService jwtService;
+
 
     @PostMapping("/register")
     public ResponseEntity<?> registerUser(@RequestBody CreateAccountDTO createAccountDTO) {
@@ -41,27 +45,26 @@ public class UserController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<ProfileDTO> loginUser(@RequestBody LoginDTO loginDTO) {
+    public ResponseEntity<?> loginUser(@RequestBody LoginDTO loginDTO) {
         String email = loginDTO.getEmail();
         String password = loginDTO.getPassword();
 
         if (!DatabaseRepository.existsByEmail(email)) {
-            return ResponseEntity.badRequest().body(
-                    new ProfileDTO(email, "", "", null));
+            return ResponseEntity.badRequest().body("Email does not exist");
         }
 
         User user = DatabaseRepository.findByEmail(email);
 
         if (!securityConfig.passwordEncoder().matches(password, user.getPassword())) {
-            return ResponseEntity.badRequest().body(
-                    new ProfileDTO(email, "", "", null));
+            return ResponseEntity.badRequest().body("Incorrect Password");
         }
 
         ProfileDTO profileDTO = new ProfileDTO(
                 user.getEmail(),
                 user.getUsername(),
                 user.getCreatedAt().toString(),
-                user.getUuid()
+                user.getUuid(),
+                jwtService.generateToken(email)
         );
         return ResponseEntity.ok(profileDTO);
     }
@@ -112,4 +115,24 @@ public class UserController {
         return ResponseEntity.ok(user);
     }
 
+    @GetMapping("/users/me")
+    public ResponseEntity<?> getCurrentUser(@RequestHeader("Authorization") String token) {
+        if (token == null || !token.startsWith("Bearer ")) {
+            return ResponseEntity.status(401).body("Unauthorized");
+        }
+        String jwtToken = token.substring(7);
+        String email = jwtService.extractEmail(jwtToken);
+        User user = DatabaseRepository.findByEmail(email);
+        if (user == null) {
+            return ResponseEntity.status(404).body("User not found");
+        }
+        ProfileDTO profileDTO = new ProfileDTO(
+                user.getEmail(),
+                user.getUsername(),
+                user.getCreatedAt().toString(),
+                user.getUuid(),
+                jwtToken
+        );
+        return ResponseEntity.ok(profileDTO);
+    }
 }
