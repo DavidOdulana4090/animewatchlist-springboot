@@ -106,6 +106,7 @@ public class UserController {
 
     }
 
+    // Test endpoint
     @GetMapping("/api/users/{uuid}")
     public ResponseEntity<User> displaybyId(@PathVariable UUID uuid) {
         User user = DatabaseRepository.findById(uuid).orElse(null);
@@ -134,5 +135,19 @@ public class UserController {
                 jwtToken
         );
         return ResponseEntity.ok(profileDTO);
+    }
+
+    @GetMapping("/token/validate")
+    public ResponseEntity<?> validateToken(@RequestHeader("Authorization") String token) {
+        if (token == null || !token.startsWith("Bearer ")) {
+            return ResponseEntity.status(401).body("Unauthorized");
+        }
+        String jwtToken = token.substring(7);
+        boolean isValid = jwtService.isTokenValid(jwtToken);
+        if (isValid) {
+            return ResponseEntity.ok("Token is valid");
+        } else {
+            return ResponseEntity.status(401).body("Invalid token");
+        }
     }
 }
