@@ -39,6 +39,7 @@ public class UserController {
         user.setEmail(createAccountDTO.getEmail());
         user.setCreatedAt(LocalDate.now());
         user.setPassword(encoded);
+        user.setUsername(createAccountDTO.getEmail().split("@")[0]);
 
         DatabaseRepository.save(user);
         return ResponseEntity.ok("User created Successfully");

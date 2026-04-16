@@ -1,10 +1,9 @@
 package com.david.animewatchlistspringboot.DTO;
 
-import com.david.animewatchlistspringboot.entity.User;
-import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.List;
 import java.util.UUID;
 
 @Getter
@@ -18,6 +17,6 @@ public class AnimeDTO {
     private Integer progress;
     private Double rating;
     private Boolean isFavourite;
-    private String genre;
+    private List<String> genres;
 
 }

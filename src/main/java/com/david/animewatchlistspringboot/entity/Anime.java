@@ -6,7 +6,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.util.UUID;
+import java.util.List;
 
 @Setter
 @Getter
@@ -25,7 +25,7 @@ public class Anime {
     private String title;
     private String status;
     private int progress;
-    private String genre;
+    private List<String> genres;
     private double rating;
     private boolean favourites;
 

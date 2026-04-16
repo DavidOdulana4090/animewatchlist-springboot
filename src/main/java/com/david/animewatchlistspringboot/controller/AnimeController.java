@@ -37,7 +37,7 @@ public class AnimeController {
                     animeDTO.setTitle(anime.getTitle());
                     animeDTO.setStatus(anime.getStatus());
                     animeDTO.setProgress(anime.getProgress());
-                    animeDTO.setGenre(anime.getGenre());
+                    animeDTO.setGenres(anime.getGenres());
                     animeDTO.setRating(anime.getRating());
                     animeDTO.setIsFavourite(anime.isFavourites());
                     return animeDTO;
@@ -50,7 +50,7 @@ public class AnimeController {
         newAnime.setTitle(animeDTO.getTitle());
         newAnime.setStatus(animeDTO.getStatus());
         newAnime.setProgress(animeDTO.getProgress());
-        newAnime.setGenre(animeDTO.getGenre());
+        newAnime.setGenres(animeDTO.getGenres());
         newAnime.setRating(animeDTO.getRating());
         newAnime.setFavourites(animeDTO.getIsFavourite());
         User user =
@@ -67,7 +67,7 @@ public class AnimeController {
             anime.setTitle(animeDetails.getTitle());
             anime.setStatus(animeDetails.getStatus());
             anime.setProgress(animeDetails.getProgress());
-            anime.setGenre(animeDetails.getGenre());
+            anime.setGenres(animeDetails.getGenres());
             anime.setRating(animeDetails.getRating());
             anime.setFavourites(animeDetails.isFavourites());
             return ResponseEntity.ok(animeRepository.save(anime));
@@ -81,6 +81,4 @@ public class AnimeController {
             return ResponseEntity.ok().build();
         }).orElse(ResponseEntity.notFound().build());
     }
-
-
 }
