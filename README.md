@@ -1,5 +1,5 @@
 #  Anime watchlist / movie tracker
-#  Java 25
+#  Java 21
 #  Springboot
 #  Spring Security & JWT (JSON Web Tokens)
 #  Spring Data JPA
