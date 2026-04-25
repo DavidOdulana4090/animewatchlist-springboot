@@ -39,24 +39,22 @@ public class AnimeController {
                     animeDTO.setProgress(anime.getProgress());
                     animeDTO.setGenres(anime.getGenres());
                     animeDTO.setRating(anime.getRating());
-                    animeDTO.setIsFavourite(anime.isFavourites());
+                    animeDTO.setIsFavourite(anime.isFavourite());
                     return animeDTO;
                 }).toList();
     }
 
     @PostMapping("/add/{uuid}")
-    public ResponseEntity<Anime> addAnime(@RequestBody AnimeDTO animeDTO, @RequestParam String uuid) {
+    public ResponseEntity<Anime> addAnime(@RequestBody AnimeDTO animeDTO, @PathVariable String uuid) {
+        User user = userRepository.findById(UUID.fromString(uuid)).orElseThrow(() -> new RuntimeException("User not found"));
         Anime newAnime = new Anime();
         newAnime.setTitle(animeDTO.getTitle());
         newAnime.setStatus(animeDTO.getStatus());
         newAnime.setProgress(animeDTO.getProgress());
         newAnime.setGenres(animeDTO.getGenres());
         newAnime.setRating(animeDTO.getRating());
-        newAnime.setFavourites(animeDTO.getIsFavourite());
-        User user =
-                userRepository.findById(UUID.fromString(uuid)).orElseThrow(() -> new RuntimeException("User not found"));
-        newAnime.setUser(user);  // Set the user for the anime
-
+        newAnime.setFavourite(animeDTO.getIsFavourite());
+        newAnime.setUser(user);
         Anime savedAnime = animeRepository.save(newAnime);
         return ResponseEntity.ok(savedAnime);
     }
@@ -69,7 +67,7 @@ public class AnimeController {
             anime.setProgress(animeDetails.getProgress());
             anime.setGenres(animeDetails.getGenres());
             anime.setRating(animeDetails.getRating());
-            anime.setFavourites(animeDetails.isFavourites());
+            anime.setFavourite(animeDetails.isFavourite());
             return ResponseEntity.ok(animeRepository.save(anime));
         }).orElse(ResponseEntity.notFound().build());
     }

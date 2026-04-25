@@ -51,13 +51,13 @@ public class UserController {
         String password = loginDTO.getPassword();
 
         if (!DatabaseRepository.existsByEmail(email)) {
-            return ResponseEntity.badRequest().body("Email does not exist");
+            return ResponseEntity.badRequest().body("Incorrect Password or Email");
         }
 
         User user = DatabaseRepository.findByEmail(email);
 
         if (!securityConfig.passwordEncoder().matches(password, user.getPassword())) {
-            return ResponseEntity.badRequest().body("Incorrect Password");
+            return ResponseEntity.badRequest().body("Incorrect Password or Email");
         }
 
         ProfileDTO profileDTO = new ProfileDTO(

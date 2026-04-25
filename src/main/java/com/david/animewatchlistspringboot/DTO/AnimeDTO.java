@@ -13,10 +13,10 @@ public class AnimeDTO {
     private UUID userId;
     private Long id;
     private String title;
-    private String status;
-    private Integer progress;
-    private Double rating;
-    private Boolean isFavourite;
-    private List<String> genres;
+    private String status = String.valueOf(AnimeEnum.WATCHING);
+    private Integer progress = 0;
+    private Double rating = 0.0;
+    private Boolean isFavourite = false;
+    private List<String> genres = List.of();
 
 }

@@ -27,7 +27,7 @@ public class Anime {
     private int progress;
     private List<String> genres;
     private double rating;
-    private boolean favourites;
+    private boolean favourite;
 
     public Anime(String title) {
         this.title = title;
