@@ -6,6 +6,7 @@ import com.david.animewatchlistspringboot.entity.Anime;
 import com.david.animewatchlistspringboot.entity.User;
 import com.david.animewatchlistspringboot.repository.AnimeRepository;
 import com.david.animewatchlistspringboot.repository.UserRepository;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -48,6 +49,7 @@ public class AnimeController {
     public ResponseEntity<Anime> addAnime(@RequestBody AnimeDTO animeDTO, @PathVariable String uuid) {
         User user = userRepository.findById(UUID.fromString(uuid)).orElseThrow(() -> new RuntimeException("User not found"));
         Anime newAnime = new Anime();
+        newAnime.setId(animeDTO.getId());
         newAnime.setTitle(animeDTO.getTitle());
         newAnime.setStatus(animeDTO.getStatus());
         newAnime.setProgress(animeDTO.getProgress());
@@ -59,17 +61,18 @@ public class AnimeController {
         return ResponseEntity.ok(savedAnime);
     }
 
+    @Transactional
     @PutMapping("/update/{id}")
     public ResponseEntity<Anime> updateAnime(@PathVariable Long id, @RequestBody Anime animeDetails) {
-        return animeRepository.findById(id).map(anime -> {
-            anime.setTitle(animeDetails.getTitle());
-            anime.setStatus(animeDetails.getStatus());
-            anime.setProgress(animeDetails.getProgress());
-            anime.setGenres(animeDetails.getGenres());
-            anime.setRating(animeDetails.getRating());
-            anime.setFavourite(animeDetails.isFavourite());
-            return ResponseEntity.ok(animeRepository.save(anime));
-        }).orElse(ResponseEntity.notFound().build());
+        Anime anime = animeRepository.findById(id).orElseThrow(() -> new RuntimeException("Anime not found"));
+        anime.setTitle(animeDetails.getTitle());
+        anime.setStatus(animeDetails.getStatus());
+        anime.setProgress(animeDetails.getProgress());
+        anime.setGenres(animeDetails.getGenres());
+        anime.setRating(animeDetails.getRating());
+        anime.setFavourite(animeDetails.isFavourite());
+        Anime updatedAnime = animeRepository.existsById(id) ? animeRepository.save(anime) : null;
+        return ResponseEntity.ok(updatedAnime);
     }
 
     @DeleteMapping("/delete/{id}")
