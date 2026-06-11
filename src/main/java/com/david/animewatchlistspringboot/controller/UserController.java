@@ -1,5 +1,6 @@
 package com.david.animewatchlistspringboot.controller;
 
+import com.david.animewatchlistspringboot.DTO.AuthLoginDTO;
 import com.david.animewatchlistspringboot.DTO.CreateAccountDTO;
 import com.david.animewatchlistspringboot.DTO.LoginDTO;
 import com.david.animewatchlistspringboot.DTO.ProfileDTO;
@@ -149,6 +150,42 @@ public class UserController {
             return ResponseEntity.ok("Token is valid");
         } else {
             return ResponseEntity.status(401).body("Invalid token");
+        }
+    }
+
+    @PostMapping("/auth/login")
+    public ResponseEntity<?> authLogin(@RequestBody AuthLoginDTO authLoginDTO){
+        try {
+            String email = authLoginDTO.getEmail();
+            String username = authLoginDTO.getUsername();
+
+            User user = DatabaseRepository.findByEmail(email);
+
+//        Don't need this since auth is passwordless
+//        if (!securityConfig.passwordEncoder().matches(password, user.getPassword())) {
+//            return ResponseEntity.badRequest().body("Incorrect Password or Email");
+//        }
+
+            if (user == null){
+                User newAccount = new User();
+                newAccount.setEmail(authLoginDTO.getEmail());
+                newAccount.setUsername(authLoginDTO.getUsername());
+                newAccount.setUuid(UUID.randomUUID());
+                newAccount.setCreatedAt(LocalDate.now());
+
+                user = DatabaseRepository.save(newAccount);
+            }
+
+            ProfileDTO profileDTO = new ProfileDTO(
+                    user.getEmail(),
+                    user.getUsername(),
+                    user.getCreatedAt().toString(),
+                    user.getUuid(),
+                    jwtService.generateToken(email)
+            );
+            return ResponseEntity.ok().body(profileDTO);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().build();
         }
     }
 }
