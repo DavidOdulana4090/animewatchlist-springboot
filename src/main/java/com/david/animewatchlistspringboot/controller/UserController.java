@@ -1,9 +1,6 @@
 package com.david.animewatchlistspringboot.controller;
 
-import com.david.animewatchlistspringboot.DTO.AuthLoginDTO;
-import com.david.animewatchlistspringboot.DTO.CreateAccountDTO;
-import com.david.animewatchlistspringboot.DTO.LoginDTO;
-import com.david.animewatchlistspringboot.DTO.ProfileDTO;
+import com.david.animewatchlistspringboot.DTO.*;
 import com.david.animewatchlistspringboot.config.SecurityConfig;
 import com.david.animewatchlistspringboot.entity.User;
 import com.david.animewatchlistspringboot.repository.UserRepository;
@@ -187,5 +184,22 @@ public class UserController {
         } catch (Exception e) {
             return ResponseEntity.badRequest().build();
         }
+    }
+
+    @PostMapping("/user/settings")
+    public ResponseEntity<?> updateSettings(@RequestHeader("Authorization") String token, @RequestBody SettingsDTO settingsDTO){
+        if (token == null || !token.startsWith("Bearer ")) {
+            return ResponseEntity.status(401).body("Unauthorized");
+        }
+        String jwtToken = token.substring(7);
+        String email = jwtService.extractEmail(jwtToken);
+        User user = DatabaseRepository.findByEmail(email);
+        if (user == null) {
+            return ResponseEntity.status(404).body("User not found");
+        }
+        user.setUsername(settingsDTO.getUsername());
+        user.setEmail(settingsDTO.getEmail());
+        DatabaseRepository.save(user);
+        return ResponseEntity.ok("Changed Settings");
     }
 }
